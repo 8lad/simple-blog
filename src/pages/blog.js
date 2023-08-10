@@ -6,30 +6,32 @@ import Seo from '../components/seo';
 const BlogPage = ({ data }) => {
   return (
     <Layout title='My Blog Post'>
-      <ul>
-        {
-          data.allFile.nodes.map(node => (
-            <li key={node.name}>
-              <a href={node.absolutePath}>
-                {node.name}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+      {
+        data.allMdx.nodes.map(node => (
+          <article key={node.id}>
+            <h2>{node.frontmatter.title}</h2>
+            <p>Posted: {node.frontmatter.date}</p>
+            <p>{node.excerpt}</p>
+          </article>
+        ))
+      }
     </Layout>
   );
 };
 
 export const query = graphql`
 query {
-  allFile(filter: {sourceInstanceName: {eq: "blog"}}) {
-    nodes {
-      name,
-      absolutePath
+    allMdx(sort: { frontmatter: { date: DESC }}) {
+      nodes {
+        frontmatter {
+          date(formatString: "MMMM D, YYYY")
+          title
+        }
+        id
+        excerpt
+      }
     }
   }
-}
 `;
 
 export const Head = () => <Seo title='My blog post' />
